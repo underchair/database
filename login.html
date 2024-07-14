@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공사 타요타요 - 로그인</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <title>로그인 - 공사 타요타요</title>
     <style>
-        :root {
+                :root {
             --primary-color: #2ecc71;
             --secondary-color:  #27ae60;
             --background-color: #f0f3f6;
@@ -114,122 +113,115 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>로그인</h1>
-            <nav>
-                <div class="btn-container">
-                    <button onclick="window.location.href='index.html'" class="btn"><i class="fas fa-home"></i> 메인</button>
-                    <button onclick="showRegisterForm()" class="btn"><i class="fas fa-user-plus"></i> 회원가입</button>
-                </div>
-            </nav>
-        </header>
-        <main>
+        <h1>로그인</h1>
+
+        <div class="btn-container">
+            <a href="index.html">메인</a>
+            <a href="register.html">회원가입</a>
+        </div>
+
+        <div role="main">
             <form id="loginForm">
-                <input type="text" id="loginUserId" placeholder="아이디(기수.중대.이름)" required>
-                <input type="password" id="loginPassword" placeholder="비밀번호(교번)" required>
+                <label for="username">사용자 이름:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">비밀번호:</label>
+                <input type="password" id="password" name="password" required>
+                
                 <button type="submit">로그인</button>
             </form>
-            <form id="registerForm" style="display:none;">
-                <input type="text" id="regUserId" placeholder="아이디 (기수.중대.이름)" required>
-                <input type="password" id="regPassword" placeholder="비밀번호 (교번)" required>
-                <input type="text" id="regName" placeholder="이름" required>
-                <button type="submit">회원가입</button>
-            </form>
+
+            <p id="loginMessage"></p>
+
             <div id="userInfo" style="display:none;">
                 <h2>사용자 정보</h2>
-                <p id="welcomeMessage"></p>
+                <p id="userInfoContent"></p>
                 <button onclick="logout()">로그아웃</button>
             </div>
-        </main>
+        </div>
     </div>
 
-    
     <script>
-        // 사용자 데이터를 저장할 배열
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        let currentUser = null;
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('https://underchair.git.io/database/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
 
-        // 페이지 로드 시 로그인 상태 확인
-        window.onload = function() {
-            checkLoginStatus();
-        };
+                if (!response.ok) {
+                    throw new Error('Login failed');
+                }
 
-        function showLoginForm() {
-            document.getElementById('loginForm').style.display = 'flex';
-            document.getElementById('registerForm').style.display = 'none';
-        }
+                const data = await response.json();
+                localStorage.setItem('token', data.token);
+                document.getElementById('loginMessage').textContent = '로그인 성공!';
+                showUserInfo(data.user);
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('loginMessage').textContent = '로그인 실패. 다시 시도해주세요.';
+            }
+        });
 
-        function showRegisterForm() {
+        function showUserInfo(user) {
             document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('userInfoContent').textContent = `환영합니다, ${user.name}님!`;
         }
 
-        // 로그인 폼 제출 이벤트
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const userId = document.getElementById('loginUserId').value;
-            const password = document.getElementById('loginPassword').value;
-            login(userId, password);
+        async function logout() {
+            try {
+                const response = await fetch('https://underchair.git.io/database/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Logout failed');
+                }
+
+                localStorage.removeItem('token');
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('loginMessage').textContent = '로그아웃되었습니다.';
+            } catch (error) {
+                console.error('Logout error:', error);
+                document.getElementById('loginMessage').textContent = '로그아웃 중 오류가 발생했습니다.';
+            }
+        }
+
+        // 페이지 로드 시 토큰 확인
+        window.addEventListener('load', async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await fetch('https://underchair.git.io/database/user', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user info');
+                    }
+
+                    const user = await response.json();
+                    showUserInfo(user);
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                    localStorage.removeItem('token');
+                }
+            }
         });
-
-        // 회원가입 폼 제출 이벤트
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const userId = document.getElementById('regUserId').value;
-            const password = document.getElementById('regPassword').value;
-            const name = document.getElementById('regName').value;
-            register(userId, password, name);
-        });
-
-        function login(userId, password) {
-            const user = users.find(u => u.userId === userId && u.password === password);
-            if (user) {
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                alert('로그인 성공!');
-                checkLoginStatus();
-            } else {
-                alert('아이디 또는 비밀번호가 잘못되었습니다.');
-            }
-        }
-
-        function register(userId, password, name) {
-            if (users.some(u => u.userId === userId)) {
-                alert('이미 존재하는 아이디입니다.');
-                return;
-            }
-            const newUser = { userId, password, name };
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            alert('회원가입이 완료되었습니다.');
-            showLoginForm();
-        }
-
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            checkLoginStatus();
-        }
-
-        function checkLoginStatus() {
-            const userInfo = document.getElementById('userInfo');
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-
-            currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-            if (currentUser) {
-                userInfo.style.display = 'block';
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'none';
-                document.getElementById('welcomeMessage').textContent = `안녕하세요, ${currentUser.name}님!`;
-            } else {
-                userInfo.style.display = 'none';
-                loginForm.style.display = 'flex';
-                registerForm.style.display = 'none';
-            }
-        }
     </script>
-    
 </body>
 </html>
