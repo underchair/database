@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>택시카풀 게시판</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        :root {
+    --primary-color: #f39c12;
+    --secondary-color: #e67e22;
+    --background-color: #f0f3f6;
+    --text-color: #2c3e50;
+    --shadow-color: rgba(243, 156, 18, 0.1);
+    --accent-color: #d35400;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    width: 90%;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2 {
+    color: var(--text-color);
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px var(--shadow-color);
+}
+
+form, .post, .comment {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px var(--shadow-color);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(243, 156, 18, 0.1);
+}
+
+.post:hover, .comment:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px var(--shadow-color);
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+}
+
+button {
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.post, .comment {
+    border-left: 5px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.post::before, .comment::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--secondary-color));
+}
+
+.author {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.comment {
+    margin-left: 2rem;
+    background-color: #f9f9f9;
+}
+
+.search-results {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#searchForm {
+    margin-bottom: 2rem;
+}
+
+#searchForm input {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+#searchForm input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+}
+
+#searchForm button {
+    display: inline-block;
+    width: auto;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#searchForm button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+#resetSearch button {
+    display: block;
+    width: 50%;
+    margin-bottom: 2rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
+.btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px var(--shadow-color);
+}
+
+.btn.login { background-color: #27ae60; }
+.btn.register { background-color: #2980b9; }
+.btn.shuttle { background-color: #281dcd; }
+.btn.taxi { background-color: #8e44ad; }
+
+.btn.login:hover { background-color: #2ecc71; }
+.btn.register:hover { background-color: #3498db; }
+.btn.shuttle:hover { background-color: #493de5; }
+.btn.taxi:hover { background-color: #aa5acc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>택시카풀 게시판</h1>
+        <div class="button-container">
+            <button onclick="location.href='index.html'" class="btn shuttle"><i class="fas fa-home"></i> 메인</button>
+            <button onclick="location.href='register.html'" class="btn register"><i class="fas fa-user-plus"></i> 회원가입</button>
+            <button onclick="location.href='login.html'" class="btn login"><i class="fas fa-sign-in-alt"></i> 로그인</button>
+            <button onclick="location.href='shuttle_posts.html'" class="btn taxi"><i class="fas fa-shuttle-van"></i> 셔틀교환</button>
+        </div>
+        <main>
+            <div id="userInfo" style="display:none;">
+                <h2>사용자 정보</h2>
+                <p id="welcomeMessage"></p>
+                <button onclick="logout()" class="btn">로그아웃</button>
+            </div>
+            <div id="postForm" style="display:none;">
+                <h2>새 게시글 작성</h2>
+                <form id="newPostForm">
+                    <input type="date" id="postDate" required>
+                    <input type="time" id="postTime" required>
+                    <select id="postDirection" required>
+                        <option value="">귀영/귀향 선택</option>
+                        <option value="귀영">귀영</option>
+                        <option value="귀향">귀향</option>
+                    </select>
+                    <select id="postGradeRestriction" required>
+                        <option value="">학년구분 선택</option>
+                        <option value="학년구분o(같은 학년만)">학년구분o(같은 학년만)</option>
+                        <option value="학년구분x">학년구분x</option>
+                    </select>
+                    <input type="text" id="postDestination" placeholder="목적지" required>
+                    <input type="number" id="postCurrentMembers" min="1" required placeholder="현재 인원">
+                    <input type="number" id="postTotalMembers" min="1" required placeholder="총 인원">
+                    <input type="text" id="postContent" placeholder="추가 내용" required>
+                    <input type="password" id="postPassword" placeholder="4자리 비밀번호" pattern="\d{4}" required>
+                    <button type="submit" class="btn">게시글 작성</button>
+                </form>
+            </div>
+            <div id="searchForm">
+                <h2>게시글 검색</h2>
+                <form onsubmit="searchPosts(event)">
+                    <input type="text" id="searchAuthor" placeholder="작성자 검색">
+                    <button type="submit">검색</button>
+                </form>
+                <button onclick="resetSearch()">전체 보기</button>
+            </div>
+            <div id="posts">
+                <h2>게시글</h2>
+                <!-- 게시글이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentUser = null;
+        let posts = JSON.parse(localStorage.getItem('taxiPosts')) || [];
+        const postsKey = 'taxiPosts';
+
+        window.onload = function() {
+            checkLoginStatus();
+            displayPosts();
+        };
+
+        function showLoginForm() {
+            const userId = prompt("아이디를 입력하세요:");
+            const password = prompt("비밀번호를 입력하세요:");
+            if (userId && password) {
+                login(userId, password);
+            }
+        }
+
+        function showRegisterForm() {
+            const userId = prompt("아이디를 입력하세요 (기수.중대.이름):");
+            const password = prompt("비밀번호를 입력하세요 (교번):");
+            const name = prompt("이름을 입력하세요:");
+            if (userId && password && name) {
+                register(userId, password, name);
+            }
+        }
+
+        document.getElementById('newPostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const date = document.getElementById('postDate').value;
+            const time = document.getElementById('postTime').value;
+            const direction = document.getElementById('postDirection').value;
+            const gradeRestriction = document.getElementById('postGradeRestriction').value;
+            const destination = document.getElementById('postDestination').value;
+            const currentMembers = document.getElementById('postCurrentMembers').value;
+            const totalMembers = document.getElementById('postTotalMembers').value;
+            const content = document.getElementById('postContent').value;
+            const password = document.getElementById('postPassword').value;
+            
+            const title = `[${date} ${time}] ${direction} ${gradeRestriction} ${destination} (${currentMembers}/${totalMembers})`;
+            createPost(title, content, password, date, time, direction, gradeRestriction, destination, currentMembers, totalMembers);
+        });
+
+        function login(userId, password) {
+            const user = users.find(u => u.userId === userId && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                alert('로그인 성공!');
+                checkLoginStatus();
+            } else {
+                alert('아이디 또는 비밀번호가 잘못되었습니다.');
+            }
+        }
+
+        function register(userId, password, name) {
+            if (users.some(u => u.userId === userId)) {
+                alert('이미 존재하는 아이디입니다.');
+                return;
+            }
+            const newUser = { userId, password, name };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('회원가입이 완료되었습니다.');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            checkLoginStatus();
+        }
+
+        function checkLoginStatus() {
+            const userInfo = document.getElementById('userInfo');
+            const postForm = document.getElementById('postForm');
+
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (currentUser) {
+                userInfo.style.display = 'block';
+                postForm.style.display = 'block';
+                document.getElementById('welcomeMessage').textContent = `안녕하세요, ${currentUser.name}님!`;
+            } else {
+                userInfo.style.display = 'none';
+                postForm.style.display = 'none';
+            }
+            displayPosts();
+        }
+
+        function createPost(title, content, password, date, time, direction, gradeRestriction, destination, currentMembers, totalMembers) {
+            if (!currentUser) {
+                alert('게시글을 작성하려면 로그인이 필요합니다.');
+                return;
+            }
+            const newPost = {
+                id: Date.now(),
+                number: posts.length + 1,
+                title,
+                content,
+                author: currentUser.userId,
+                password,
+                date,
+                time,
+                direction,
+                gradeRestriction,
+                destination,
+                currentMembers,
+                totalMembers,
+                comments: []
+            };
+            posts.push(newPost);
+            localStorage.setItem(postsKey, JSON.stringify(posts));
+            displayPosts();
+            document.getElementById('newPostForm').reset();
+            showNotification('게시글이 등록되었습니다!');
+        }
+
+        function createComment(postId, content, password) {
+            console.log("Creating comment:", postId, content, password);
+            if (!currentUser) {
+                alert('댓글을 작성하려면 로그인이 필요합니다.');
+                return;
+            }
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.comments.push({
+                    id: Date.now(),
+                    content,
+                    author: currentUser.userId,
+                    password
+                });
+                console.log("Comment added:", post.comments);
+                localStorage.setItem(postsKey, JSON.stringify(posts));
+                displayPosts();
+            } else {
+                console.error("Post not found:", postId);
+            }
+        }
+
+        function displayPosts(postsToDisplay = posts, isSearchResult = false) {
+    const postsContainer = document.getElementById('posts');
+    postsContainer.innerHTML = '<h2>게시글</h2>';
+
+    if (isSearchResult) {
+        const searchResultsElement = document.createElement('div');
+        searchResultsElement.className = 'search-results';
+        searchResultsElement.innerHTML = `<h3>검색 결과: ${postsToDisplay.length}건</h3>`;
+        postsContainer.insertBefore(searchResultsElement, postsContainer.firstChild);
+    }
+
+    postsToDisplay.forEach((post, index) => {
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+        if (isSearchResult) {
+            postElement.classList.add('search-result');
+        }
+        postElement.innerHTML = `
+            <h3>#${post.number} ${post.title}</h3>
+            <p>${post.content}</p>
+            <p class="author">작성자: ${post.author}</p>
+            <button onclick="showEditPostForm(${post.id})">수정</button>
+            <button onclick="deletePost(${post.id})">삭제</button>
+            <h4>댓글</h4>
+            ${post.comments.map(comment => `
+                <div class="comment">
+                    <p>${comment.content}</p>
+                    <p class="author">작성자: ${comment.author}</p>
+                    <button onclick="showEditCommentForm(${post.id}, ${comment.id})">수정</button>
+                    <button onclick="deleteComment(${post.id}, ${comment.id})">삭제</button>
+                </div>
+            `).join('')}
+            ${currentUser ? `
+                <form class="commentForm" data-post-id="${post.id}">
+                    <input type="text" name="commentContent" placeholder="댓글 작성" required>
+                    <input type="password" name="commentPassword" placeholder="4자리 비밀번호" pattern="\\d{4}" required>
+                    <button type="submit">댓글 작성</button>
+                </form>
+            ` : ''}
+        `;
+        postsContainer.appendChild(postElement);
+    });
+
+    // 댓글 폼에 이벤트 리스너 추가
+    document.querySelectorAll('.commentForm').forEach(form => {
+        form.addEventListener('submit', handleCommentSubmit);
+    });
+}
+
+        function handleCommentSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const postId = parseInt(form.getAttribute('data-post-id'));
+            const content = form.commentContent.value;
+            const password = form.commentPassword.value;
+            createComment(postId, content, password);
+            form.reset();
+        }
+
+        function showEditPostForm(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const password = prompt("비밀번호를 입력하세요:");
+                if (password === post.password) {
+                    const newDate = prompt("새 날짜를 입력하세요 (YYYY-MM-DD):", post.date);
+                    const newTime = prompt("새 시간을 입력하세요 (HH:MM):", post.time);
+                    const newDirection = prompt("새 방향을 입력하세요 (귀영 또는 귀향):", post.direction);
+                    const newGradeRestriction = prompt("새 학년구분을 입력하세요 (학년구분o 또는 학년구분x):", post.gradeRestriction);
+                    const newDestination = prompt("새 목적지를 입력하세요:", post.destination);
+                    const newCurrentMembers = prompt("새 현재 인원을 입력하세요:", post.currentMembers);
+                    const newTotalMembers = prompt("새 총 인원을 입력하세요:", post.totalMembers);
+                    const newContent = prompt("새 내용을 입력하세요:", post.content);
+
+                    if (newDate && newTime && newDirection && newGradeRestriction && newDestination && newCurrentMembers && newTotalMembers && newContent) {
+                        post.date = newDate;
+                        post.time = newTime;
+                        post.direction = newDirection;
+                        post.gradeRestriction = newGradeRestriction;
+                        post.destination = newDestination;
+                        post.currentMembers = newCurrentMembers;
+                        post.totalMembers = newTotalMembers;
+                        post.content = newContent;
+                        
+                        post.title = `[${newDate} ${newTime}] ${newDirection} ${newGradeRestriction} ${newDestination} (${newCurrentMembers}/${newTotalMembers})`;
+                        localStorage.setItem(postsKey, JSON.stringify(posts));
+                        displayPosts();
+                    }
+                } else {
+                    alert('비밀번호가 잘못되었습니다.');
+                }
+            }
+        }
+
+        function deletePost(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+        const password = prompt("비밀번호를 입력하세요:");
+        if (password === post.password) {
+            posts = posts.filter(p => p.id !== postId);
+            // 게시글 번호 재정렬
+            posts.forEach((p, index) => {
+                p.number = index + 1;
+            });
+            localStorage.setItem(postsKey, JSON.stringify(posts));
+            displayPosts();
+        } else {
+            alert('비밀번호가 잘못되었습니다.');
+        }
+    }
+}
+
+        function showEditCommentForm(postId, commentId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const comment = post.comments.find(c => c.id === commentId);
+                if (comment) {
+                    const password = prompt("비밀번호를 입력하세요:");
+                    if (password === comment.password) {
+                        const newContent = prompt("새 댓글 내용을 입력하세요:", comment.content);
+                        if (newContent) {
+                            comment.content = newContent;
+                            localStorage.setItem(postsKey, JSON.stringify(posts));
+                            displayPosts();
+                        }
+                    } else {
+                        alert('비밀번호가 잘못되었습니다.');
+                    }
+                }
+            }
+        }
+
+        function deleteComment(postId, commentId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                const comment = post.comments.find(c => c.id === commentId);
+                if (comment) {
+                    const password = prompt("비밀번호를 입력하세요:");
+                    if (password === comment.password) {
+                        post.comments = post.comments.filter(c => c.id !== commentId);
+                        localStorage.setItem(postsKey, JSON.stringify(posts));
+                        displayPosts();
+                    } else {
+                        alert('비밀번호가 잘못되었습니다.');
+                    }
+                }
+            }
+        }
+        function searchPosts(event) {
+            if (event) {
+                event.preventDefault();
+            }
+            const searchTerm = document.getElementById('searchAuthor').value.toLowerCase();
+            const searchResults = posts.filter(post => post.author.toLowerCase().includes(searchTerm));
+            displayPosts(searchResults, true);
+        }
+
+        function resetSearch() {
+            document.getElementById('searchAuthor').value = '';
+            displayPosts(posts);
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = '#f39c12';
+            notification.style.color = 'white';
+            notification.style.padding = '15px';
+            notification.style.borderRadius = '5px';
+            notification.style.zIndex = '1000';
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        // 함수들을 전역 범위에 노출
+        window.showLoginForm = showLoginForm;
+        window.showRegisterForm = showRegisterForm;
+        window.logout = logout;
+        window.showEditPostForm = showEditPostForm;
+        window.deletePost = deletePost;
+        window.showEditCommentForm = showEditCommentForm;
+        window.deleteComment = deleteComment;
+    </script>
+</body>
+</html>

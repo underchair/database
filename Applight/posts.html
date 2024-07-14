@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판 웹사이트 - 게시글</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #posts {
+            margin-top: 20px;
+        }
+        .post {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .post h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .post p {
+            margin-bottom: 5px;
+        }
+        .post small {
+            color: #666;
+        }
+        .comment-form {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .comment-form input[type="text"], .comment-form input[type="password"] {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .comment-form button {
+            width: 80px;
+        }
+        .comments {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .comment {
+            background-color: #f9f9f9;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .comment-content {
+            flex-grow: 1;
+        }
+        .comment-actions button {
+            font-size: 12px;
+            padding: 3px 6px;
+            margin-left: 5px;
+        }
+        .edit-form {
+            display: flex;
+            margin-top: 5px;
+        }
+        .edit-form input {
+            flex-grow: 1;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>게시글</h1>
+    <nav>
+        <ul>
+            <li><a href="#" id="mainLink">메인</a></li>
+            <li><a href="#" id="loginLink">로그인</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>게시글 작성</h2>
+        <form id="postForm">
+            <input type="text" id="postTitle" placeholder="제목" required>
+            <textarea id="postContent" placeholder="내용" required></textarea>
+            <button type="submit">게시글 작성</button>
+        </form>
+        <h2>게시글 목록</h2>
+        <div id="posts">
+            <!-- 게시글이 여기에 동적으로 추가됩니다 -->
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const postForm = document.getElementById('postForm');
+            const postsContainer = document.getElementById('posts');
+            let postCount = 0;
+
+            // 메인 및 로그인 링크 이벤트 리스너 추가
+            document.getElementById('mainLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html'; // 메인 페이지 URL로 변경하세요
+            });
+
+            document.getElementById('loginLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'login.html'; // 로그인 페이지 URL로 변경하세요
+            });
+
+            postForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('postTitle').value;
+                const content = document.getElementById('postContent').value;
+                
+                if (title && content) {
+                    postCount++;
+                    const postElement = createPostElement(postCount, title, content);
+                    postsContainer.prepend(postElement);
+                    
+                    // 폼 초기화
+                    postForm.reset();
+                }
+            });
+
+            function createPostElement(id, title, content) {
+                const article = document.createElement('article');
+                article.className = 'post';
+                article.innerHTML = `
+                    <h3>${id}. ${title}</h3>
+                    <p>${content}</p>
+                    <small>작성일: ${new Date().toLocaleString()}</small>
+                    <div class="comments"></div>
+                    <form class="comment-form">
+                        <input type="text" placeholder="댓글을 입력하세요" required>
+                        <input type="password" placeholder="비밀번호 (4자리 숫자)" pattern="[0-9]{4}" required title="4자리 숫자를 입력하세요">
+                        <button type="submit">댓글 작성</button>
+                    </form>
+                `;
+
+                const commentForm = article.querySelector('.comment-form');
+                const commentsContainer = article.querySelector('.comments');
+
+                commentForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const commentInput = this.querySelector('input[type="text"]');
+                    const passwordInput = this.querySelector('input[type="password"]');
+                    const commentContent = commentInput.value.trim();
+                    const password = passwordInput.value;
+
+                    if (commentContent && isValidPassword(password)) {
+                        const commentElement = createCommentElement(commentContent, password);
+                        commentsContainer.appendChild(commentElement);
+                        commentInput.value = '';
+                        passwordInput.value = '';
+                    } else {
+                        alert("올바른 형식으로 입력해주세요. 비밀번호는 4자리 숫자여야 합니다.");
+                    }
+                });
+
+                return article;
+            }
+
+            function createCommentElement(content, password) {
+                const comment = document.createElement('div');
+                comment.className = 'comment';
+                comment.innerHTML = `
+                    <span class="comment-content">${content}</span>
+                    <div class="comment-actions">
+                        <button class="edit-btn">수정</button>
+                        <button class="delete-btn">삭제</button>
+                    </div>
+                `;
+
+                const editBtn = comment.querySelector('.edit-btn');
+                const deleteBtn = comment.querySelector('.delete-btn');
+
+                editBtn.addEventListener('click', function() {
+                    const inputPassword = prompt("비밀번호를 입력하세요 (4자리 숫자):");
+                    if (isValidPassword(inputPassword) && inputPassword === password) {
+                        const commentContent = comment.querySelector('.comment-content');
+                        const currentContent = commentContent.textContent;
+
+                        const editForm = document.createElement('form');
+                        editForm.className = 'edit-form';
+                        editForm.innerHTML = `
+                            <input type="text" value="${currentContent}" required>
+                            <button type="submit">확인</button>
+                            <button type="button" class="cancel-btn">취소</button>
+                        `;
+
+                        comment.replaceChild(editForm, commentContent);
+
+                        editForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const newContent = this.querySelector('input').value.trim();
+                            if (newContent) {
+                                commentContent.textContent = newContent;
+                                comment.replaceChild(commentContent, editForm);
+                            }
+                        });
+
+                        editForm.querySelector('.cancel-btn').addEventListener('click', function() {
+                            comment.replaceChild(commentContent, editForm);
+                        });
+                    } else {
+                        alert("비밀번호가 일치하지 않거나 올바르지 않습니다.");
+                    }
+                });
+
+                deleteBtn.addEventListener('click', function() {
+                    const inputPassword = prompt("비밀번호를 입력하세요 (4자리 숫자):");
+                    if (isValidPassword(inputPassword) && inputPassword === password) {
+                        if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+                            comment.remove();
+                        }
+                    } else {
+                        alert("비밀번호가 일치하지 않거나 올바르지 않습니다.");
+                    }
+                });
+
+                return comment;
+            }
+
+            function isValidPassword(password) {
+                return /^\d{4}$/.test(password);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공사 타요타요 - 로그인</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color:  #27ae60;
+            --background-color: #f0f3f6;
+            --text-color: #2c3e50;
+            --shadow-color: rgba(46, 204, 113, 0.1);
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2129&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1, h2 {
+            color: var(--text-color);
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn, button {
+            padding: 0.6rem 0.8rem;
+            background-color: var(--primary-color);
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            border-radius: 30px;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: calc(66.67% - 0.5rem);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn:hover, button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn i {
+            margin-right: 0.3rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid  #27ae60;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: #2980b9;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+        }
+
+        #userInfo {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px var(--shadow-color);
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>로그인</h1>
+            <nav>
+                <div class="btn-container">
+                    <button onclick="window.location.href='index.html'" class="btn"><i class="fas fa-home"></i> 메인</button>
+                    <button onclick="showRegisterForm()" class="btn"><i class="fas fa-user-plus"></i> 회원가입</button>
+                </div>
+            </nav>
+        </header>
+        <main>
+            <form id="loginForm">
+                <input type="text" id="loginUserId" placeholder="아이디(기수.중대.이름)" required>
+                <input type="password" id="loginPassword" placeholder="비밀번호(교번)" required>
+                <button type="submit">로그인</button>
+            </form>
+            <form id="registerForm" style="display:none;">
+                <input type="text" id="regUserId" placeholder="아이디 (기수.중대.이름)" required>
+                <input type="password" id="regPassword" placeholder="비밀번호 (교번)" required>
+                <input type="text" id="regName" placeholder="이름" required>
+                <button type="submit">회원가입</button>
+            </form>
+            <div id="userInfo" style="display:none;">
+                <h2>사용자 정보</h2>
+                <p id="welcomeMessage"></p>
+                <button onclick="logout()">로그아웃</button>
+            </div>
+        </main>
+    </div>
+
+    
+    <script>
+        // 사용자 데이터를 저장할 배열
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentUser = null;
+
+        // 페이지 로드 시 로그인 상태 확인
+        window.onload = function() {
+            checkLoginStatus();
+        };
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'flex';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'flex';
+        }
+
+        // 로그인 폼 제출 이벤트
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userId = document.getElementById('loginUserId').value;
+            const password = document.getElementById('loginPassword').value;
+            login(userId, password);
+        });
+
+        // 회원가입 폼 제출 이벤트
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userId = document.getElementById('regUserId').value;
+            const password = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value;
+            register(userId, password, name);
+        });
+
+        function login(userId, password) {
+            const user = users.find(u => u.userId === userId && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                alert('로그인 성공!');
+                checkLoginStatus();
+            } else {
+                alert('아이디 또는 비밀번호가 잘못되었습니다.');
+            }
+        }
+
+        function register(userId, password, name) {
+            if (users.some(u => u.userId === userId)) {
+                alert('이미 존재하는 아이디입니다.');
+                return;
+            }
+            const newUser = { userId, password, name };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('회원가입이 완료되었습니다.');
+            showLoginForm();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            checkLoginStatus();
+        }
+
+        function checkLoginStatus() {
+            const userInfo = document.getElementById('userInfo');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (currentUser) {
+                userInfo.style.display = 'block';
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'none';
+                document.getElementById('welcomeMessage').textContent = `안녕하세요, ${currentUser.name}님!`;
+            } else {
+                userInfo.style.display = 'none';
+                loginForm.style.display = 'flex';
+                registerForm.style.display = 'none';
+            }
+        }
+    </script>
+    
+</body>
+</html>

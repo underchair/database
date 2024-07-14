@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공사 타요타요 - 메인</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-image: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 3em;
+            margin: 0;
+        }
+
+        main {
+            text-align: center;
+            margin-top: 60px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            color: #34495e;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .button i {
+            margin-right: 12px;
+            font-size: 1.4em;
+        }
+
+        .register { background-color: #3498db; }
+        .register:hover { background-color: #2980b9; transform: translateY(-3px); }
+
+        .login { background-color: #2ecc71; }
+        .login:hover { background-color: #27ae60; transform: translateY(-3px); }
+
+        .shuttle { 
+            background-color: #9b59b6; 
+            padding: 20px 40px;
+            font-size: 1.4em;
+        }
+        .shuttle:hover { background-color: #8e44ad; transform: translateY(-3px); }
+
+        .taxi { 
+            background-color: #f39c12; 
+            padding: 20px 40px;
+            font-size: 1.4em;
+        }
+        .taxi:hover { background-color: #dc8f14; transform: translateY(-3px); }
+
+        .memo-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .memo {
+            width: 45%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .memo h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+
+        .memo textarea {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Noto Sans KR', sans-serif;
+            resize: vertical;
+        }
+
+        .memo button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .memo button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <img src="공군사관학교_마크.png" alt="공군사관학교 마크" class="logo">
+                <h1>공사 타요타요</h1>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <p>환영합니다! 아래 버튼을 클릭하여 원하는 기능을 선택하세요.</p>
+        <div class="button-container">
+            <a href="register.html" class="button register"><i class="fas fa-user-plus"></i>회원가입</a>
+            <a href="login.html" class="button login"><i class="fas fa-sign-in-alt"></i>로그인</a>
+            <a href="shuttle_posts.html" class="button shuttle"><i class="fas fa-shuttle-van"></i>셔틀교환</a>
+            <a href="taxi_posts.html" class="button taxi"><i class="fas fa-taxi"></i>택시카풀</a>
+        </div>
+
+        <div class="memo-container">
+            <div class="memo">
+                <h2>금주 배차계획</h2>
+                <textarea id="schedule" placeholder="여기에 금주 배차계획을 입력하세요..."></textarea>
+                <button onclick="saveMemo('schedule')">저장</button>
+            </div>
+            <div class="memo">
+                <h2>금주 학년별 외출 일정</h2>
+                <textarea id="outings" placeholder="여기에 금주 학년별 외출 일정을 입력하세요..."></textarea>
+                <button onclick="saveMemo('outings')">저장</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function saveMemo(id) {
+            const content = document.getElementById(id).value;
+            localStorage.setItem(id, content);
+            alert('저장되었습니다!');
+        }
+
+        window.onload = function() {
+            const schedule = localStorage.getItem('schedule');
+            const outings = localStorage.getItem('outings');
+            if (schedule) document.getElementById('schedule').value = schedule;
+            if (outings) document.getElementById('outings').value = outings;
+        }
+    </script>
+</body>
+</html>
